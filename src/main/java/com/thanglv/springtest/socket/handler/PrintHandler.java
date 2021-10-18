@@ -24,7 +24,6 @@ public class PrintHandler extends Thread {
         } catch (IOException e) {
             return;
         }
-        String line = null;
         while (isRun && client.isConnected()) {
             try {
                 int nRead;
