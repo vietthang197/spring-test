@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 public class MainTest {
     public static void main(String[] args) throws PrinterException, FileNotFoundException {
         PrintService sp46Printer = PrintProvider.getPrinterByName("SP46");
+        if (sp46Printer != null)
+            System.out.println("DETECTED SP46 printer");
         PrinterJob printerJob = PrinterJob.getPrinterJob();
         printerJob.setPrintService(sp46Printer);
         Book book = new Book();
