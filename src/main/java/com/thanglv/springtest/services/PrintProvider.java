@@ -15,6 +15,6 @@ public class PrintProvider {
                 return printService;
             }
         }
-        return null;
+        throw new RuntimeException("Error not found print service with name =" + name);
     }
 }
