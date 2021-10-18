@@ -16,27 +16,28 @@ public class PrintHandler extends Thread {
     @Override
     public void run() {
         InputStream inp = null;
-        BufferedReader reader = null;
+        BufferedInputStream reader = null;
         DataOutputStream out = null;
         try {
             inp = client.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(inp));
-            out = new DataOutputStream(client.getOutputStream());
+            reader = new BufferedInputStream(inp);
         } catch (IOException e) {
             return;
         }
         String line = null;
         while (isRun && client.isConnected()) {
             try {
-                line = reader.readLine();
-                if (line != null) {
-                    System.out.println(line);
+                int nRead;
+                byte[] data = new byte[1024];
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                while ((nRead = reader.read(data, 0, data.length)) != -1) {
+                    outputStream.write(data, 0, nRead);
                 }
-                if (line.equals("PRINT 1"))
-                    isRun = false;
-            } catch (IOException e) {
+                System.out.println(outputStream.toString());
+                outputStream.flush();
+                outputStream.close();
+            } catch (Exception e) {
                 e.printStackTrace();
-                return;
             }
         }
     }

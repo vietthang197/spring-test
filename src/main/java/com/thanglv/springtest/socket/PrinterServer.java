@@ -25,7 +25,7 @@ public class PrinterServer extends Thread {
             try {
                 Socket client = server.accept();
                 if (client.isConnected()) {
-                    System.out.println("Điện thoại connected");
+                    logger.debug("NEW DEVICES CONNECTED!");
                 }
                 new PrintHandler(client).start();
             } catch (IOException e) {
