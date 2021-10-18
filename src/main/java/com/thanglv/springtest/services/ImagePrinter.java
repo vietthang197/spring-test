@@ -1,37 +1,61 @@
 package com.thanglv.springtest.services;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
+import java.io.InputStream;
+import java.net.URL;
 
 public class ImagePrinter implements Printable {
-    private double          x, y, width;
 
-    private int             orientation;
+    BufferedImage image;
 
-    private BufferedImage   image;
-
-    public ImagePrinter(PrinterJob printJob, BufferedImage image) {
-        PageFormat pageFormat = printJob.defaultPage();
-        this.x = 0;
-        this.y = 0;
-        this.width = pageFormat.getImageableWidth();
-        this.orientation = pageFormat.getOrientation();
-        this.image = image;
-    }
-
-    @Override
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
-            throws PrinterException {
-        if (pageIndex == 0) {
-
-            System.out.println("pW:" +  pageFormat.getPaper().getImageableWidth() + ", pH:" + pageFormat.getPaper().getImageableHeight());
-            return PAGE_EXISTS;
-        } else {
-            return NO_SUCH_PAGE;
+    public ImagePrinter(InputStream stream) {
+        try {
+            image = ImageIO.read(stream);
+        } catch (Exception e) {
         }
     }
+
+    public ImagePrinter(URL url) {
+        try {
+            image = ImageIO.read(url);
+        } catch (Exception e) {
+        }
+    }
+
+    public int print(Graphics g, PageFormat pf, int index) {
+
+        if (index > 0 || image == null) {
+            return Printable.NO_SUCH_PAGE;
+        }
+
+        ((Graphics2D)g).translate(pf.getImageableX(), pf.getImageableY());
+        int w = image.getWidth(null);
+        int h = image.getHeight(null);
+        int iw = (int)pf.getImageableWidth();
+        int ih = (int)pf.getImageableHeight();
+
+        // ensure image will fit
+        int dw = w;
+        int dh = h;
+        if (dw > iw) {
+            dh = (int)(dh * ( (float) iw / (float) dw)) ;
+            dw = iw;
+        }
+        if (dh > ih) {
+            dw = (int)(dw * ( (float) ih / (float) dh)) ;
+            dh = ih;
+        }
+        // centre on page
+        int dx = (iw - dw) / 2;
+        int dy = (ih - dh) / 2;
+
+        g.drawImage(image, dx, dy, dx+dw, dy+dh, 0, 0, w, h, null);
+        return Printable.PAGE_EXISTS;
+    }
+
+
 }

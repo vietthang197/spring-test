@@ -4,10 +4,10 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
 public class PrintProvider {
-    public static PrintService getSP46Printer() {
+    public static PrintService getPrinterByName(String name) {
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
         for (PrintService printService : printServices) {
-            if (printService.getName().equals("SP46")) {
+            if (printService.getName().equals(name)) {
                 return printService;
             }
         }
